@@ -1,4 +1,4 @@
--- Ngày thay đổi	:
+-- Ngày thay đổi	: {CURRENT_TIME}
 -- Người thay đổi	:
 -- Phiên bản 		  :
 -- Mô tả			    : Tạo stream mapped để parsing dữ liệu xml

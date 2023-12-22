@@ -1,4 +1,4 @@
--- Ngày thay đổi	:
+-- Ngày thay đổi	: {CURRENT_TIME}
 -- Người thay đổi	:
 -- Phiên bản 		  :
 -- Mô tả			    : Stream sink/transform dữ liệu init trước khi đẩy xuống ODS

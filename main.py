@@ -21,21 +21,22 @@ def main(table_name):
     )
     read_env_file(env_file_content)
 
-    # 02.STREAM
-    status = create_stream(table_name)
-
-    if status:
-         # 01.DDL
+    if create_stream(table_name):
+        # 01.DDL
         create_folder(os.environ["DDL_FOLDER"])
-        
+
         # 03.CONNECTOR
         create_connector(table_name)
-        # Excel 
-        shutil.copy("template/Checklist-golive-SEAB_SALARY_CUSTOMER.xlsx", os.environ["EXCEL_FILE"])
-    
+
+        # Excel
+        shutil.copy(
+            "template/Checklist-golive-SEAB_SALARY_CUSTOMER.xlsx",
+            os.environ["EXCEL_FILE"],
+        )
+
 
 if __name__ == "__main__":
-    table_names = read_file_content("data/table_name.txt").split('\n')
+    table_names = read_file_content("data/table_name.txt").split("\n")
     for table_name in table_names:
-        if(table_name):
+        if table_name:
             main(table_name.strip())

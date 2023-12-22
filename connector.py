@@ -22,15 +22,15 @@ def create_connector(table_name):
         "{}/{}".format(os.environ["CONNECTOR_FOLDER"], INIT_FILE).replace(
             "{CONNECTOR_NAME}", cdc_connector_name
         ),
-        read_file_content("template/connector/{}".format(INIT_FILE)).replace(
-            "{TABLE_NAME}", TABLE_NAME
-        ).replace("{CONNECTOR_NAME}", init_connector_name),
+        read_file_content("template/connector/{}".format(INIT_FILE))
+        .replace("{TABLE_NAME}", TABLE_NAME)
+        .replace("{CONNECTOR_NAME}", init_connector_name),
     )
     write_to_file(
         "{}/{}".format(os.environ["CONNECTOR_FOLDER"], CDC_FILE).replace(
             "{CONNECTOR_NAME}", cdc_connector_name
         ),
-        read_file_content("template/connector/{}".format(CDC_FILE)).replace(
-            "{TABLE_NAME}", TABLE_NAME
-        ).replace("{CONNECTOR_NAME}", cdc_connector_name),
+        read_file_content("template/connector/{}".format(CDC_FILE))
+        .replace("{TABLE_NAME}", TABLE_NAME)
+        .replace("{CONNECTOR_NAME}", cdc_connector_name),
     )
