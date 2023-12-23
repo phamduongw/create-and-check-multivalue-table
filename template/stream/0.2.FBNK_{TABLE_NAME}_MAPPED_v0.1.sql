@@ -8,7 +8,7 @@ set 'ksql.functions._global_.xml.parser.pad.empty.tags'='false'
 -----set properties khi muốn parse multivalue
 set 'ksql.functions._global_.xml.parser.add.multivalue.index'='true';
 
-CREATE OR REPLACE STREAM FBNK_{TABLE_NAME}_MAPPED AS SELECT
+CREATE OR REPLACE STREAM FBNK_{TABLE_NAME}_MAPPED WITH ( PARTITIONS=16, REPLICAS=3, RETENTION_MS=1814400000) AS SELECT
   DATA.ROWKEY ROWKEY,
   DATA.LOOKUP_KEY LOOKUP_KEY,
   DATA.RECID RECID,  
