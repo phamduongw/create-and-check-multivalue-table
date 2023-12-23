@@ -29,8 +29,9 @@ def main(table_name):
         create_connector(table_name)
 
         # Excel
+
         shutil.copy(
-            "template/Checklist-golive-SEAB_SALARY_CUSTOMER.xlsx",
+            "template/{}".format(os.environ["EXCEL_FILE"].split("/")[-1]),
             os.environ["EXCEL_FILE"],
         )
 
