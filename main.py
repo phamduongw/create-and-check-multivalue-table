@@ -1,6 +1,7 @@
 import os
 import shutil
-from utils import read_file_content, read_env_file, create_folder
+from utils import read_file_content, read_env_file
+from ddl import create_ddl
 from stream import create_stream
 from connector import create_connector
 
@@ -23,7 +24,7 @@ def main(table_name):
 
     if create_stream(table_name):
         # 01.DDL
-        create_folder(os.environ["DDL_FOLDER"])
+        create_ddl(table_name)
 
         # 03.CONNECTOR
         create_connector(table_name)
