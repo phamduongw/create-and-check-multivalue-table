@@ -111,8 +111,7 @@ def create_stream(ods_stream):
 
         create_statement_of_stream(1, "FBNK", "")
         create_statement_of_stream(2, "FBNK", "_MAPPED")
-        create_statement_of_stream(3, "FBNK", "_MULTIVALUE")
-        create_statement_of_stream(4, "ODS", "")
+        create_statement_of_stream(3, "ODS", "")
 
         return True
 
