@@ -16,7 +16,7 @@
     "errors.deadletterqueue.topic.replication.factor": "3",
     "errors.deadletterqueue.context.headers.enable": "true",
     "transforms.removeField.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
-    "transforms.removeField.exclude": "REP_TS, OP_TS, CURRENT_TS, RECORD_STATUS, LOOKUP_KEY, TABLE_NAME",
+    "transforms.removeField.exclude": "REP_TS, OP_TS, CURRENT_TS, LOOKUP_KEY, TABLE_NAME",
     "connection.url": "jdbc:oracle:thin:@dc2-exa-scan-out0304.seabank.com.vn:1521/ODS",
     "connection.user": "T24SB",
     "connection.password": "xxxx",

@@ -30,9 +30,8 @@ def main(table_name):
         create_connector(table_name)
 
         # Excel
-
         shutil.copy(
-            "template/{}".format(os.environ["EXCEL_FILE"].split("/")[-1]),
+            "template/{}".format("Checklist-golive-{TABLE_NAME}.xlsx"),
             os.environ["EXCEL_FILE"],
         )
 
