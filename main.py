@@ -5,10 +5,12 @@ from ddl import create_ddl
 from stream import create_stream
 from connector import create_connector
 
+BUILD_FOLDER = "build"
+
 
 def main(table_name):
     try:
-        raw_index = len(os.listdir("build")) + 1
+        raw_index = len(os.listdir(BUILD_FOLDER)) + 1
     except OSError:
         raw_index = 1
 
@@ -37,7 +39,9 @@ def main(table_name):
 
 
 if __name__ == "__main__":
-    table_names = read_file_content("data/table_name.txt").split("\n")
-    for table_name in table_names:
+    if os.path.exists(BUILD_FOLDER):
+        shutil.rmtree(BUILD_FOLDER)
+
+    for table_name in read_file_content("data/table_name.txt").split("\n"):
         if table_name:
             main(table_name.strip())
