@@ -87,7 +87,7 @@ def get_statement_of_stream(stream_name):
 
 
 def describe_ods_stream(ods_stream):
-    stream_flow = get_stream_flow("ODS_{}".format(ods_stream.strip()))[::-1]
+    stream_flow = get_stream_flow("DW_{}".format(ods_stream.strip()))[::-1]
 
     if len(stream_flow) == 1:
         print("-- {}\n{}\n".format(stream_flow[0], "ERROR!"))
@@ -111,7 +111,7 @@ def create_stream(ods_stream):
 
         create_statement_of_stream(1, "FBNK", "")
         create_statement_of_stream(2, "FBNK", "_MAPPED")
-        create_statement_of_stream(3, "ODS", "")
+        create_statement_of_stream(3, "DW", "")
 
         return True
 

@@ -1,5 +1,5 @@
 {
-  "name": "T_{CONNECTOR_NAME}2Dw",
+  "name": "T_{CONNECTOR_NAME}Init2Dw",
   "config": {
     "connector.class": "vn.bnh.connect.jdbc.JdbcAuditSinkConnector",
     "tasks.max": "4",
@@ -11,13 +11,13 @@
     "errors.tolerance": "none",
     "errors.log.enable": "true",
     "errors.log.include.messages": "true",
-    "topics": "DW_{CONNECTOR_NAME}",
-    "errors.deadletterqueue.topic.name": "ODS_SINK_ERROR",
+    "topics": "DW_{TABLE_NAME}_INIT",
+    "errors.deadletterqueue.topic.name": "DW_SINK_ERROR",
     "errors.deadletterqueue.topic.replication.factor": "3",
     "errors.deadletterqueue.context.headers.enable": "true",
     "transforms.removeField.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
-    "transforms.removeField.exclude": "REP_TS, OP_TS, CURRENT_TS, LOOKUP_KEY, TABLE_NAME",
-    "connection.url": "jdbc:oracle:thin:@dc2-exa-scan-out0304.seabank.com.vn:1521/ODS",
+    "transforms.removeField.exclude": "REP_TS, OP_TS, CURRENT_TS, LOOKUP_KEY, TABLE_NAME", // Để ý xem có phải bảng his hay không nếu có thêm trường recver
+    "connection.url": "jdbc:oracle:thin:@dc2-exa-scan-out0304.seabank.com.vn:1521/DW",
     "connection.user": "T24WH",
     "connection.password": "xxxx",
     "dialect.name": "OracleDatabaseDialect",
@@ -25,7 +25,7 @@
     "connection.backoff.ms": "10000",
     "insert.mode": "UPSERT",
     "table.types": "TABLE",
-    "table.name.format": "T24WH.DW_{CONNECTOR_NAME}",
+    "table.name.format": "T24WH.DW_{TABLE_NAME}",
     "pk.mode": "record_value",
     "pk.fields": "RECID,BANKING_DATE",
     "auto.create": "false",
