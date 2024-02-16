@@ -5,15 +5,15 @@ from utils import read_file_content, write_to_file
 def convert_table_name(table_name):
     template = ""
 
-    for word in table_name.replace("ODS_", "").split("_"):
+    for word in table_name.replace("DW_", "").split("_"):
         template += word.capitalize()
 
     return "{}".format(template), "{}".format(template)
 
 
 def create_connector(table_name):
-    CDC_FILE = "connector_T_{CONNECTOR_NAME}2Ods.json"
-    INIT_FILE = "connector_T_{CONNECTOR_NAME}Init2Ods.json"
+    CDC_FILE = "connector_T_{CONNECTOR_NAME}2Dw.json"
+    INIT_FILE = "connector_T_{CONNECTOR_NAME}Init2Dw.json"
     TABLE_NAME = os.environ["TABLE_NAME"]
 
     cdc_connector_name, init_connector_name = convert_table_name(table_name)
