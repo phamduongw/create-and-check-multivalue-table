@@ -1,7 +1,7 @@
 import os
 import time
 from services import list_streams_extended
-from utils import create_folder, write_to_file, read_file_content
+from utils import read_env_file, write_to_file, read_file_content
 
 
 def get_all_streams_and_topics():
@@ -27,92 +27,82 @@ def get_all_streams_and_topics():
     return all_streams_and_topics
 
 
-def get_stream_flow(ods_stream):
+def get_stream_flow(final_stream):
     stream_flow = []
 
-    def get_stream_flow_item(ods_stream):
-        stream_flow.append(ods_stream)
+    def get_stream_flow_item(pre_stream):
+        stream_flow.append(pre_stream)
 
         for stream_info in ALL_STREAMS_AND_TOPICS:
             for sink in stream_info["sinks"]:
-                if sink == ods_stream:
+                if sink == pre_stream:
                     get_stream_flow_item(stream_info["name"])
 
-    get_stream_flow_item(ods_stream)
+    get_stream_flow_item("DW_{}".format(final_stream.strip()))
 
-    return stream_flow
-
-
-def create_statement_of_stream(stream_id, stream_prefix, stream_suffix):
-    TEMPLATE_STRING = "{TABLE_NAME}"
-    CURRENT_TIME = time.strftime("%d/%m/%Y", time.gmtime(time.time() + 7 * 3600))
-
-    INIT_FILE = "0.{}.INIT_{}_{}{}_v0.1.sql".format(
-        stream_id,
-        stream_prefix,
-        TEMPLATE_STRING,
-        stream_suffix,
-    )
-    CDC_FILE = "0.{}.{}_{}{}_v0.1.sql".format(
-        stream_id,
-        stream_prefix,
-        TEMPLATE_STRING,
-        stream_suffix,
-    )
-
-    write_to_file(
-        "{}/{}".format(os.environ["INIT_STREAM_FOLDER"], INIT_FILE).replace(
-            "{TABLE_NAME}", TABLE_NAME
-        ),
-        read_file_content("template/stream/{}".format(INIT_FILE))
-        .replace("{CURRENT_TIME}", CURRENT_TIME)
-        .replace("{TABLE_NAME}", TABLE_NAME),
-    )
-    write_to_file(
-        "{}/{}".format(os.environ["CDC_STREAM_FOLDER"], CDC_FILE).replace(
-            "{TABLE_NAME}", TABLE_NAME
-        ),
-        read_file_content("template/stream/{}".format(CDC_FILE))
-        .replace("{CURRENT_TIME}", CURRENT_TIME)
-        .replace("{TABLE_NAME}", TABLE_NAME),
-    )
+    return stream_flow[::-1]
 
 
 def get_statement_of_stream(stream_name):
+    DESCRIBE_FILE_NAME = "DESCRIBE-DW_{TABLE_NAME}.sql"
     for stream_info in ALL_STREAMS_AND_TOPICS:
         if stream_info["name"] == stream_name:
-            create_folder("/".join(os.environ["DESCRIBE_FILE"].split("/")[:-1]))
-            with open(os.environ["DESCRIBE_FILE"], "a+") as file:
+            with open(
+                "{}/{}".format(
+                    os.environ["BUILD_PATH"],
+                    DESCRIBE_FILE_NAME.replace("{TABLE_NAME}", TABLE_NAME),
+                ),
+                "a+",
+            ) as file:
                 file.write(stream_info["statement"] + "\n\n")
 
 
-def describe_ods_stream(ods_stream):
-    stream_flow = get_stream_flow("DW_{}".format(ods_stream.strip()))[::-1]
+def create_stream(final_stream):
+    global ALL_STREAMS_AND_TOPICS
+    ALL_STREAMS_AND_TOPICS = get_all_streams_and_topics()
+    global TABLE_NAME
+    TABLE_NAME = os.environ["TABLE_NAME"]
+    global INDEX
+    INDEX = os.environ["INDEX"]
+
+    stream_flow = get_stream_flow(final_stream)
 
     if len(stream_flow) == 1:
-        print("-- {}\n{}\n".format(stream_flow[0], "ERROR!"))
+        message = "NOT FOUND!"
+    elif len(stream_flow) == 3:
+        template_type = "single-value"
+    elif len(stream_flow) == 4:
+        template_type = "multi-value"
+    else:
+        message = "ERROR!"
+
+    if "message" in locals():
+        print("-- {}\n{}\n".format(stream_flow[0], message))
         return False
+
+    if "template_type" in locals():
+        env_file_content = (
+            read_file_content(".env")
+            .replace("{TEMPLATE_TYPE}", template_type)
+            .replace("{INDEX}", INDEX)
+            .replace("{TABLE_NAME}", TABLE_NAME)
+            .split("\n")
+        )
+        read_env_file(env_file_content)
+
+    CURRENT_TIME = time.strftime("%d/%m/%Y", time.gmtime(time.time() + 7 * 3600))
+    STREAM_FILE_NAME = "{INDEX}.DW_{TABLE_NAME}.sql"
+
+    write_to_file(
+        "{}/{}".format(os.environ["BUILD_PATH"], STREAM_FILE_NAME)
+        .replace("{INDEX}", INDEX)
+        .replace("{TABLE_NAME}", TABLE_NAME),
+        read_file_content(
+            "template/{}/{}".format(os.environ["TEMPLATE_TYPE"], STREAM_FILE_NAME)
+        )
+        .replace("{CURRENT_TIME}", CURRENT_TIME)
+        .replace("{TABLE_NAME}", TABLE_NAME),
+    )
 
     for stream_name in stream_flow:
         get_statement_of_stream(stream_name)
-
-    return True
-
-
-def create_stream(ods_stream):
-    # ALL_STREAMS_AND_TOPICS
-    global ALL_STREAMS_AND_TOPICS
-    ALL_STREAMS_AND_TOPICS = get_all_streams_and_topics()
-
-    if describe_ods_stream(ods_stream):
-        # TABLE NAME
-        global TABLE_NAME
-        TABLE_NAME = os.environ["TABLE_NAME"]
-
-        create_statement_of_stream(1, "FBNK", "")
-        create_statement_of_stream(2, "FBNK", "_MAPPED")
-        create_statement_of_stream(3, "DW", "")
-
-        return True
-
-    return False

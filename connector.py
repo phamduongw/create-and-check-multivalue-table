@@ -2,35 +2,26 @@ import os
 from utils import read_file_content, write_to_file
 
 
-def convert_table_name(table_name):
+def get_connector_name(table_name):
     template = ""
 
-    for word in table_name.replace("DW_", "").split("_"):
+    for word in table_name.split("_"):
         template += word.capitalize()
 
-    return "{}".format(template), "{}".format(template)
+    return template
 
 
 def create_connector(table_name):
-    CDC_FILE = "connector_T_{CONNECTOR_NAME}2Dw.json"
-    INIT_FILE = "connector_T_{CONNECTOR_NAME}Init2Dw.json"
-    TABLE_NAME = os.environ["TABLE_NAME"]
-
-    cdc_connector_name, init_connector_name = convert_table_name(table_name)
+    CONNECTOR_FILE_NAME = "{INDEX}.connector_T_{CONNECTOR_NAME}2Dw.json"
+    CONNECTOR_NAME = get_connector_name(table_name)
 
     write_to_file(
-        "{}/{}".format(os.environ["CONNECTOR_FOLDER"], INIT_FILE).replace(
-            "{CONNECTOR_NAME}", cdc_connector_name
-        ),
-        read_file_content("template/connector/{}".format(INIT_FILE))
-        .replace("{TABLE_NAME}", TABLE_NAME)
-        .replace("{CONNECTOR_NAME}", init_connector_name),
-    )
-    write_to_file(
-        "{}/{}".format(os.environ["CONNECTOR_FOLDER"], CDC_FILE).replace(
-            "{CONNECTOR_NAME}", cdc_connector_name
-        ),
-        read_file_content("template/connector/{}".format(CDC_FILE))
-        .replace("{TABLE_NAME}", TABLE_NAME)
-        .replace("{CONNECTOR_NAME}", cdc_connector_name),
+        "{}/{}".format(os.environ["BUILD_PATH"], CONNECTOR_FILE_NAME)
+        .replace("{INDEX}", os.environ["INDEX"])
+        .replace("{CONNECTOR_NAME}", CONNECTOR_NAME),
+        read_file_content(
+            "template/{}/{}".format(os.environ["TEMPLATE_TYPE"], CONNECTOR_FILE_NAME)
+        )
+        .replace("{TABLE_NAME}", table_name)
+        .replace("{CONNECTOR_NAME}", CONNECTOR_NAME),
     )

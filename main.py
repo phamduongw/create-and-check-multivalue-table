@@ -24,17 +24,20 @@ def main(table_name):
     )
     read_env_file(env_file_content)
 
-    if create_stream(table_name):
-        # 01.DDL
+    if create_stream(table_name) != False:
+        # DDL
         create_ddl(table_name)
 
-        # 03.CONNECTOR
+        # CONNECTOR
         create_connector(table_name)
 
-        # Excel
+        # EXCEL
+        EXCEL_FILE_NAME = "Checklist-golive-{TABLE_NAME}.xlsx"
         shutil.copy(
-            "template/{}".format("Checklist-golive-{TABLE_NAME}.xlsx"),
-            os.environ["EXCEL_FILE"],
+            "template/{}/{}".format(os.environ["TEMPLATE_TYPE"], EXCEL_FILE_NAME),
+            "{}/{}".format(os.environ["BUILD_PATH"], EXCEL_FILE_NAME).replace(
+                "{TABLE_NAME}", table_name
+            ),
         )
 
 
