@@ -23,12 +23,21 @@ def main(table_index, table_name):
         create_connector(table_name)
 
         # EXCEL
-        EXCEL_FILE_NAME = "Checklist-golive-{TABLE_NAME}.xlsx"
+        EXCEL_FILE_NAME = "{INDEX}.Checklist-golive-{TABLE_NAME}.xlsx"
         shutil.copy(
             "template/{}/{}".format(os.environ["TEMPLATE_TYPE"], EXCEL_FILE_NAME),
-            "{}/{}".format(os.environ["BUILD_PATH"], EXCEL_FILE_NAME).replace(
-                "{TABLE_NAME}", table_name
-            ),
+            "{}/{}".format(os.environ["BUILD_PATH"], EXCEL_FILE_NAME)
+            .replace("{INDEX}", table_index)
+            .replace("{TABLE_NAME}", table_name),
+        )
+
+        # MAP_SS_FBNK
+        MAP_SS_FBNK_FILE_NAME = "{INDEX}.MAP_SS_FBNK_{TABLE_NAME}.sql"
+        shutil.copy(
+            "template/{}/{}".format(os.environ["TEMPLATE_TYPE"], MAP_SS_FBNK_FILE_NAME),
+            "{}/{}".format(os.environ["BUILD_PATH"], MAP_SS_FBNK_FILE_NAME)
+            .replace("{INDEX}", table_index)
+            .replace("{TABLE_NAME}", table_name),
         )
 
 
